@@ -1,49 +1,82 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 
 class App extends Component {
 
-  constructor(){
+
+  constructor() {
     super();
+    this.TYPE_POST_NOTIFICATION = 'postNotification';
+    this.TYPE_INCOMING_NOTIFICATION = 'incomingNotification'
+    this.TYPE_POST_MESSAGE = 'postMessage';
+    this.TYPE_INCOMING_MESSAGE = 'incomingMessage';
+
     this.state =
-    {
-        currentUser: {name: 'Bob'}, // optional. if currentUser is not defined, it means the user is Anonymous
-        messages: []
+      {
+        currentUser: { name: 'Bob' }, // optional. if currentUser is not defined, it means the user is Anonymous
+        messages: [],
+        notifications: []
       }
-      //Bind functions
-      this.handleMessage = this.handleMessage.bind(this);
-    }
+    //Bind functions
+    this.handleMessage = this.handleMessage.bind(this);
+    this.setUser = this.setUser.bind(this);
+  }
 
-    handleMessage(event){
-      if(event.key === 'Enter'){
-        let userName = this.state.currentUser.name;
-        let newMessage = {username: userName, content: event.target.value}
-        event.target.value = '';
-        this.socket.send(JSON.stringify(newMessage));
-      }
-    }
+  setUser(username) {
+    let oldUsername = this.state.currentUser.name;
+    this.setState({ currentUser: { name: username } });
+    let msgString = oldUsername + ' has changed their name to ' + username;
+    let message = { type: this.TYPE_POST_NOTIFICATION, content: msgString };
+    this.postNotification(message);
+  }
 
-    componentDidMount() {
-      this.socket = new WebSocket('ws://localhost:3001', 'protocolOne');
-      this.socket.onmessage = (event) => {
-        let message = JSON.parse(event.data);
-        let oldMessages = this.state.messages;
-        let newMessages = [...oldMessages, message];
-        this.setState({messages: newMessages});
-      }
-    }
-
-    render() {
-      return (
-        <div>
-        <nav className="navbar">
-        <a href="/" className="navbar-brand">Chatty</a>
-        </nav>
-        <MessageList messages={this.state.messages}/>
-        <ChatBar currentUser={this.state.currentUser} handleMessage={() => this.handleMessage}/>
-        </div>
-        );
+  handleMessage(event) {
+    if (event.key === 'Enter') {
+      let userName = this.state.currentUser.name;
+      let newMessage = { type: 'postMessage', username: userName, content: event.target.value }
+      event.target.value = '';
+      this.socket.send(JSON.stringify(newMessage));
     }
   }
-  export default App;
+
+  postNotification(message) {
+    this.socket.send(JSON.stringify(message));
+  }
+
+  componentDidMount() {
+    this.socket = new WebSocket('ws://localhost:3001', 'protocolOne');
+    this.socket.onmessage = (event) => {
+
+      let message = JSON.parse(event.data);
+      switch (message.type) {
+        case this.TYPE_INCOMING_MESSAGE: {
+          let oldMessages = this.state.messages;
+          let newMessages = [...oldMessages, message];
+          this.setState({ messages: newMessages });
+          break;
+        }
+        case this.TYPE_INCOMING_NOTIFICATION: {
+          let oldNotificaitons = this.state.notifications;
+          let newNotifications = [...oldNotificaitons, message];
+          this.setState({notifications: newNotifications});
+          break;
+        }
+
+      }
+    }
+  }
+
+  render() {
+    return (
+      <div>
+        <nav className="navbar">
+          <a href="/" className="navbar-brand">Chatty</a>
+        </nav>
+        <MessageList messages={this.state.messages} notifications={this.state.notifications} />
+        <ChatBar currentUser={this.state.currentUser} handleMessage={() => this.handleMessage} setUser={this.setUser} />
+      </div>
+    );
+  }
+}
+export default App;
