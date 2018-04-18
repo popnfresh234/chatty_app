@@ -11,12 +11,17 @@ class App extends Component {
     this.TYPE_INCOMING_NOTIFICATION = 'incomingNotification'
     this.TYPE_POST_MESSAGE = 'postMessage';
     this.TYPE_INCOMING_MESSAGE = 'incomingMessage';
+    this.TYPE_POST_CONNECT = 'postConnect';
+    this.TYPE_INCOMING_CONNECT = 'incomingConnect';
+    this.TYPE_POST_DISCONNECT = 'postDisconnect';
+    this.TYPE_INCOMING_DISCONNECT = 'incomingDisconnect';
 
     this.state =
       {
         currentUser: { name: 'Bob' }, // optional. if currentUser is not defined, it means the user is Anonymous
         messages: [],
-        notifications: []
+        notifications: [],
+        userCount: 0
       }
     //Bind functions
     this.handleMessage = this.handleMessage.bind(this);
@@ -44,10 +49,17 @@ class App extends Component {
     this.socket.send(JSON.stringify(message));
   }
 
+  buildConnectionStatusMessage(connectionType){
+    let message = {};
+    message.type = connectionType;
+    message.username = this.state.currentUser.name;
+    return message;
+  }
+
   componentDidMount() {
     this.socket = new WebSocket('ws://localhost:3001', 'protocolOne');
-    this.socket.onmessage = (event) => {
 
+    this.socket.onmessage = (event) => {
       let message = JSON.parse(event.data);
       switch (message.type) {
         case this.TYPE_INCOMING_MESSAGE: {
@@ -59,10 +71,22 @@ class App extends Component {
         case this.TYPE_INCOMING_NOTIFICATION: {
           let oldNotificaitons = this.state.notifications;
           let newNotifications = [...oldNotificaitons, message];
-          this.setState({notifications: newNotifications});
+          this.setState({ notifications: newNotifications });
           break;
         }
 
+        case this.TYPE_INCOMING_CONNECT: {
+          let oldNotificaitons = this.state.notifications;
+          let newNotifications = [...oldNotificaitons, message];
+          this.setState({ notifications: newNotifications, userCount: message.userCount });
+          break;
+        }
+        case this.TYPE_INCOMING_DISCONNECT: {
+          let oldNotificaitons = this.state.notifications;
+          let newNotifications = [...oldNotificaitons, message];
+          this.setState({ notifications: newNotifications, userCount: message.userCount});
+          break;
+        }
       }
     }
   }
@@ -71,7 +95,7 @@ class App extends Component {
     return (
       <div>
         <nav className="navbar">
-          <a href="/" className="navbar-brand">Chatty</a>
+          <a href="/" className="navbar-brand">Chatty</a><p className="navbar-usercount">{this.state.userCount} users online</p>
         </nav>
         <MessageList messages={this.state.messages} notifications={this.state.notifications} />
         <ChatBar currentUser={this.state.currentUser} handleMessage={() => this.handleMessage} setUser={this.setUser} />
