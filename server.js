@@ -54,6 +54,7 @@ wss.on('connection', (socket) => {
   let connectionMessage = buildMessage("A user connected!")
   connectionMessage.type = TYPE_INCOMING_CONNECT;
   connectionMessage.userCount = wss.clients.size;
+  connectionMessage.room = -1;
 
   broadcast(connectionMessage);
 
@@ -63,6 +64,7 @@ wss.on('connection', (socket) => {
     let outgoingMessage = buildMessage(incomingMessage.content);
     outgoingMessage.username = incomingMessage.username;
     outgoingMessage.color = socket.color;
+    outgoingMessage.room = incomingMessage.room;
 
     //Set message type for client
     switch (incomingMessage.type) {
@@ -81,6 +83,7 @@ wss.on('connection', (socket) => {
     let disconnectMessage = buildMessage('A user disconnected!');
     disconnectMessage.type = TYPE_INCOMING_DISCONNECT
     disconnectMessage.userCount = wss.clients.size;
+    disconnectMessage.room = -1;
     broadcast(disconnectMessage);
   });
 });
