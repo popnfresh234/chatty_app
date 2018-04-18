@@ -59,13 +59,14 @@ wss.on('connection', (socket) => {
 
   socket.on('message', function incoming(data) {
     let message = JSON.parse(data);
+    console.log(message);
     let outgoingMessage = buildMessage(message.content);
     outgoingMessage.username = message.username;
     outgoingMessage.color = socket.color;
 
     switch (message.type) {
       case TYPE_POST_NOTIFICATION:
-        outgoingMessage = TYPE_INCOMING_NOTIFICATION;
+        outgoingMessage.type = TYPE_INCOMING_NOTIFICATION;
         break;
       case TYPE_POST_MESSAGE:
         outgoingMessage.type = TYPE_INCOMING_MESSAGE;
