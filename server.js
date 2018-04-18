@@ -3,6 +3,11 @@ const TYPE_POST_NOTIFICATION = 'postNotification';
 const TYPE_INCOMING_NOTIFICATION = 'incomingNotification'
 const TYPE_POST_MESSAGE = 'postMessage';
 const TYPE_INCOMING_MESSAGE = 'incomingMessage';
+const TYPE_POST_CONNECT = 'postConnect';
+const TYPE_INCOMING_CONNECT = 'incomingConnect';
+const TYPE_POST_DISCONNECT = 'postDisconnect';
+const TYPE_INCOMING_DISCONNECT = 'incomingDisconnect';
+
 
 const express = require('express');
 const uuid = require('uuid/v1');
@@ -20,17 +25,32 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer({ server });
 
+function sendBroacast(msg) {
+  wss.clients.forEach((client) => {
+    client.send(JSON.stringify(msg));
+  });
+}
+
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
-  console.log('Client connected');
 
-  // Set up a callback for when a client closes the socket. This usually means they closed their browser.
+  let connectionMessage = {
+    type: TYPE_INCOMING_CONNECT,
+    content: "A user connected!",
+    id: uuid(),
+    userCount: wss.clients.size
+  }
 
+  wss.clients.forEach((client) => {
+
+      client.send(JSON.stringify(connectionMessage));
+  });
 
   ws.on('message', function incoming(data) {
     let message = JSON.parse(data);
+    console.log(message);
     message.id = uuid();
     switch (message.type) {
       case TYPE_POST_NOTIFICATION:
@@ -40,11 +60,17 @@ wss.on('connection', (ws) => {
         message.type = TYPE_INCOMING_MESSAGE;
         break;
     }
-    wss.clients.forEach(function each(client) {
-      client.send(JSON.stringify(message));
-    });
+    sendBroacast(message);
   });
 
-  ws.on('close', () => console.log('Client disconnected'));
+  ws.on('close', () => {
+    let disconnectMessage = {
+      type: TYPE_INCOMING_DISCONNECT,
+      content: "A user disconnected!",
+      id: uuid(),
+      userCount: wss.clients.size
+    }
+    sendBroacast(disconnectMessage);
+  });
 });
 
