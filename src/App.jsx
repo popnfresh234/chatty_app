@@ -49,37 +49,37 @@ class App extends Component {
     this.socket.send(JSON.stringify(message));
   }
 
+  concatNewMessages(message){
+    return this.state.messages.concat(message);
+  }
+
+  concatNewNotification(notification){
+    return this.state.notifications.concat(notification);
+  }
+
   componentDidMount() {
     this.socket = new WebSocket('ws://localhost:3001');
     this.socket.onmessage = (event) => {
       let message = JSON.parse(event.data);
       switch (message.type) {
         case this.TYPE_INCOMING_MESSAGE: {
-          let oldMessages = this.state.messages;
-          let newMessages = [...oldMessages, message];
+          let newMessages = this.concatNewMessages(message);
           this.setState({ messages: newMessages });
           break;
         }
         case this.TYPE_INCOMING_NOTIFICATION: {
-          let oldNotificaitons = this.state.notifications;
-          let newNotifications = [...oldNotificaitons, message];
+          let newNotifications = this.concatNewNotification(message);
           this.setState({ notifications: newNotifications });
           break;
         }
 
-        case this.TYPE_INCOMING_CONNECT: {
-          let oldNotificaitons = this.state.notifications;
-          let newNotifications = [...oldNotificaitons, message];
-          this.setState(
-            { notifications: newNotifications, 
-              userCount: message.userCount
-            })
-          break;
-        }
+        case this.TYPE_INCOMING_CONNECT:
         case this.TYPE_INCOMING_DISCONNECT: {
-          let oldNotificaitons = this.state.notifications;
-          let newNotifications = [...oldNotificaitons, message];
-          this.setState({ notifications: newNotifications, userCount: message.userCount});
+          let newNotifications = this.concatNewNotification(message);
+          this.setState(
+            { notifications: newNotifications,
+              userCount: message.userCount
+            });
           break;
         }
       }
