@@ -13,6 +13,8 @@ const express = require('express');
 const uuid = require('uuid/v1');
 const SocketServer = require('ws').Server;
 
+
+
 // Set the port to 3001
 const PORT = 3001;
 
@@ -25,6 +27,11 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer({ server });
 
+function getRandomColor(){
+  const COLOR_ARRAY = ['Red', 'Lime', 'Yellow', "Blue"];
+  return COLOR_ARRAY[Math.floor(Math.random()*COLOR_ARRAY.length)];
+}
+
 function sendBroacast(msg) {
   wss.clients.forEach((client) => {
     client.send(JSON.stringify(msg));
@@ -35,23 +42,23 @@ function sendBroacast(msg) {
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
 wss.on('connection', (ws) => {
-
+  ws.color = getRandomColor();
   let connectionMessage = {
     type: TYPE_INCOMING_CONNECT,
     content: "A user connected!",
     id: uuid(),
-    userCount: wss.clients.size
+    userCount: wss.clients.size,
   }
 
   wss.clients.forEach((client) => {
-
-      client.send(JSON.stringify(connectionMessage));
+      console.log(connectionMessage);
+      client.send(JSON.stringify(connectionMessage));   
   });
 
   ws.on('message', function incoming(data) {
     let message = JSON.parse(data);
-    console.log(message);
     message.id = uuid();
+    message.color = ws.color;
     switch (message.type) {
       case TYPE_POST_NOTIFICATION:
         message.type = TYPE_INCOMING_NOTIFICATION;
