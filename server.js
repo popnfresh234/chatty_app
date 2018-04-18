@@ -27,56 +27,57 @@ const server = express()
 // Create the WebSockets server
 const wss = new SocketServer({ server });
 
-function getRandomColor(){
-  const COLOR_ARRAY = ['Red', 'Lime', 'Yellow', "Blue"];
-  return COLOR_ARRAY[Math.floor(Math.random()*COLOR_ARRAY.length)];
+const getRandomColor = () => {
+  const COLOR_ARRAY = ['Red', 'Lime', 'Yellow', "Blue", "Fuchsia", "Purple", "Aqua"];
+  return COLOR_ARRAY[Math.floor(Math.random() * COLOR_ARRAY.length)];
 }
 
-function sendBroacast(msg) {
+const sendBroacast = (msg) => {
   wss.clients.forEach((client) => {
     client.send(JSON.stringify(msg));
   });
 }
 
+const buildMessage = (content) => {
+  let message = {
+    id: uuid(),
+    content,
+  }
+  return message
+}
+
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
-wss.on('connection', (ws) => {
-  ws.color = getRandomColor();
-  let connectionMessage = {
-    type: TYPE_INCOMING_CONNECT,
-    content: "A user connected!",
-    id: uuid(),
-    userCount: wss.clients.size,
-  }
+wss.on('connection', (socket) => {
+  socket.color = getRandomColor();
+  let connectionMessage = buildMessage("A user connected!")
+  connectionMessage.type = TYPE_INCOMING_CONNECT;
+  connectionMessage.userCount = wss.clients.size;
 
-  wss.clients.forEach((client) => {
-      console.log(connectionMessage);
-      client.send(JSON.stringify(connectionMessage));   
-  });
+  sendBroacast(connectionMessage);
 
-  ws.on('message', function incoming(data) {
+  socket.on('message', function incoming(data) {
     let message = JSON.parse(data);
-    message.id = uuid();
-    message.color = ws.color;
+    let outgoingMessage = buildMessage(message.content);
+    outgoingMessage.username = message.username;
+    outgoingMessage.color = socket.color;
+
     switch (message.type) {
       case TYPE_POST_NOTIFICATION:
-        message.type = TYPE_INCOMING_NOTIFICATION;
+        outgoingMessage = TYPE_INCOMING_NOTIFICATION;
         break;
       case TYPE_POST_MESSAGE:
-        message.type = TYPE_INCOMING_MESSAGE;
+        outgoingMessage.type = TYPE_INCOMING_MESSAGE;
         break;
     }
-    sendBroacast(message);
+    sendBroacast(outgoingMessage);
   });
 
-  ws.on('close', () => {
-    let disconnectMessage = {
-      type: TYPE_INCOMING_DISCONNECT,
-      content: "A user disconnected!",
-      id: uuid(),
-      userCount: wss.clients.size
-    }
+  socket.on('close', () => {
+    let disconnectMessage = buildMessage('A user disconnected!');
+    disconnectMessage.type = TYPE_INCOMING_DISCONNECT
+    disconnectMessage.userCount = wss.clients.size;
     sendBroacast(disconnectMessage);
   });
 });
