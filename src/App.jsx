@@ -49,16 +49,8 @@ class App extends Component {
     this.socket.send(JSON.stringify(message));
   }
 
-  buildConnectionStatusMessage(connectionType){
-    let message = {};
-    message.type = connectionType;
-    message.username = this.state.currentUser.name;
-    return message;
-  }
-
   componentDidMount() {
     this.socket = new WebSocket('ws://localhost:3001');
-
     this.socket.onmessage = (event) => {
       let message = JSON.parse(event.data);
       switch (message.type) {
