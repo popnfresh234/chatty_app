@@ -3,9 +3,9 @@ import React, {
 } from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
+import { Menu } from 'semantic-ui-react'
 
 class App extends Component {
-
 
   constructor() {
     super();
@@ -30,7 +30,9 @@ class App extends Component {
     //Bind functions
     this.handleMessage = this.handleMessage.bind(this);
     this.setUser = this.setUser.bind(this);
+    this.handleRoomClick = this.handleRoomClick.bind(this);
   }
+
 
   setUser(username) {
     let oldUsername = this.state.currentUser.name;
@@ -48,9 +50,17 @@ class App extends Component {
     this.postNotification(message);
   }
 
-  setRoom(event, room){
+  setRoom(event, room) {
     event.preventDefault();
-    this.setState({room})
+    
+    this.setState({ room })
+  }
+
+  //handleItemClick = e, { name } => this.setState({ activeItem: name })
+
+  handleRoomClick(e, ref) {
+    let room = Number.parseInt(ref.name);
+    this.setState({room});
   }
 
   handleMessage(event) {
@@ -118,16 +128,22 @@ class App extends Component {
   render() {
     return (
       <div>
-        <nav className="navbar">
-          <a href="/" className="navbar-brand">Chatty</a>
-          <ul>
-            <li className={this.state.room === 0 ? 'selected' : ''}><a href="" onClick={(e) => {this.setRoom(e, 0)}}>Room 1</a></li>
-            <li className={this.state.room === 1 ? 'selected' : ''}><a href="" onClick={(e) => {this.setRoom(e, 1)}}>Room 2</a></li>
-          </ul>
-          <p className="navbar-usercount">{this.state.userCount} users online</p>
-        </nav>
-        <MessageList messages={this.state.messages} notifications={this.state.notifications} color={this.state.color} room={this.state.room} />
-        <ChatBar currentUser={this.state.currentUser} handleMessage={() => this.handleMessage} setUser={this.setUser} />
+        <Menu color='blue' inverted size='massive'>
+
+          <Menu.Item header>Chatty</Menu.Item>
+          <Menu.Item name='0' active={this.state.room===0 } onClick={this.handleRoomClick}>
+            Room 1
+          </Menu.Item>
+
+          <Menu.Item name='1' active={this.state.room===1 } onClick={this.handleRoomClick}>
+            Room 2
+          </Menu.Item>
+          <Menu.Item header position='right'>{this.state.userCount} users online</Menu.Item>
+        </Menu>
+
+        <MessageList messages={this.state.messages} notifications={this.state.notifications} color={this.state.color} room={this.state.room}
+        />
+        <ChatBar currentUser={this.state.currentUser} handleMessage={()=> this.handleMessage} setUser={this.setUser} />
       </div>
     );
   }

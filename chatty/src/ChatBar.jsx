@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { Input } from 'semantic-ui-react';
+import { Grid} from 'semantic-ui-react';
+import { Segment } from 'semantic-ui-react';
 
 class ChatBar extends Component {
 
@@ -21,10 +24,19 @@ class ChatBar extends Component {
 
   render() {
     return (
-      <footer className="chatbar">
-        <input className="chatbar-username" placeholder="Your Name (Optional)" value={this.state.user} onChange={this.handleUser} onKeyDown={this.updateUsername} />
-        <input className="chatbar-message" placeholder="Type a message and hit ENTER" onKeyDown={this.props.handleMessage('test')} />
-      </footer>
+      <div className='chatbar'>
+        <Segment color='blue' attached='bottom'>
+          <Grid>
+            <Grid.Column  color='blue' width={3}>
+              <Input fluid placeholder="Your Name (Optional)" value={this.state.user} onChange={this.handleUser} onKeyDown={this.updateUsername}/>
+            </Grid.Column>
+
+            <Grid.Column  color='blue' width={13}>
+              <Input fluid placeholder="Type a message and hit ENTER" onKeyDown={this.props.handleMessage( 'test')} />
+            </Grid.Column>
+          </Grid>
+        </Segment>
+      </div>
     );
   }
 }
