@@ -18,7 +18,7 @@ class App extends Component {
 
     this.state =
       {
-        currentUser: { name: 'Bob' }, // optional. if currentUser is not defined, it means the user is Anonymous
+        currentUser: { name: 'Anonymous' }, // optional. if currentUser is not defined, it means the user is Anonymous
         messages: [],
         notifications: [],
         userCount: 0,
@@ -57,7 +57,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.socket = new WebSocket('ws://localhost:3001', 'protocolOne');
+    this.socket = new WebSocket('ws://localhost:3001');
 
     this.socket.onmessage = (event) => {
       let message = JSON.parse(event.data);
