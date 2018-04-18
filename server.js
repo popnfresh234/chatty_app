@@ -32,7 +32,7 @@ const getRandomColor = () => {
   return COLOR_ARRAY[Math.floor(Math.random() * COLOR_ARRAY.length)];
 }
 
-const sendBroacast = (msg) => {
+const broadcast = (msg) => {
   wss.clients.forEach((client) => {
     client.send(JSON.stringify(msg));
   });
@@ -55,16 +55,17 @@ wss.on('connection', (socket) => {
   connectionMessage.type = TYPE_INCOMING_CONNECT;
   connectionMessage.userCount = wss.clients.size;
 
-  sendBroacast(connectionMessage);
+  broadcast(connectionMessage);
 
   socket.on('message', function incoming(data) {
-    let message = JSON.parse(data);
-    console.log(message);
-    let outgoingMessage = buildMessage(message.content);
-    outgoingMessage.username = message.username;
+    //Get incoming mesage, build outgoing message
+    let incomingMessage = JSON.parse(data);
+    let outgoingMessage = buildMessage(incomingMessage.content);
+    outgoingMessage.username = incomingMessage.username;
     outgoingMessage.color = socket.color;
 
-    switch (message.type) {
+    //Set message type for client
+    switch (incomingMessage.type) {
       case TYPE_POST_NOTIFICATION:
         outgoingMessage.type = TYPE_INCOMING_NOTIFICATION;
         break;
@@ -72,14 +73,15 @@ wss.on('connection', (socket) => {
         outgoingMessage.type = TYPE_INCOMING_MESSAGE;
         break;
     }
-    sendBroacast(outgoingMessage);
+
+    broadcast(outgoingMessage);
   });
 
   socket.on('close', () => {
     let disconnectMessage = buildMessage('A user disconnected!');
     disconnectMessage.type = TYPE_INCOMING_DISCONNECT
     disconnectMessage.userCount = wss.clients.size;
-    sendBroacast(disconnectMessage);
+    broadcast(disconnectMessage);
   });
 });
 
