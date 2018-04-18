@@ -1,6 +1,5 @@
     @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,400italic,700");
     @import url("https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css");
-
     body {
       background: white;
       color: black;
@@ -87,7 +86,7 @@
       text-decoration: none;
     }
 
-    .navbar-usercount{
+    .navbar-usercount {
       margin: 0px;
       display: block;
       float: right;
@@ -99,7 +98,38 @@
       text-decoration: none;
     }
 
-    .notification-content{
+    .navbar ul {
+      float:left;
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .navbar li {
+      float: left;
+    }
+
+    .navbar li a {
+      display: block;
+      text-align: center;
+      font-weight: 700;
+      font-size: 15px;
+      height: 60px;
+      line-height: 60px;
+      padding: 0px 16px;
+      text-decoration: none;
+    }
+
+    .navbar li a:hover {
+      background-color: #111;
+    }
+
+    .navbar .selected {
+      background-color: purple;
+    } 
+
+    .notification-content {
       font-style: italic;
       color: tomato;
       overflow: hidden;
@@ -107,4 +137,3 @@
       padding: 5px 10px;
       flex: 8;
     }
-  
