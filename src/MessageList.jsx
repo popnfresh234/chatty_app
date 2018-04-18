@@ -7,6 +7,7 @@ class MessageList extends Component {
   
   render() {
     const notifications = this.props.notifications;
+    const color = this.props.color;
     const messages = this.props.messages;
     const combinedArray = notifications.concat(messages);
     combinedArray.sort((a, b) => {

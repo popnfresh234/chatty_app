@@ -21,7 +21,7 @@ class App extends Component {
         currentUser: { name: 'Bob' }, // optional. if currentUser is not defined, it means the user is Anonymous
         messages: [],
         notifications: [],
-        userCount: 0
+        userCount: 0,
       }
     //Bind functions
     this.handleMessage = this.handleMessage.bind(this);
@@ -78,7 +78,10 @@ class App extends Component {
         case this.TYPE_INCOMING_CONNECT: {
           let oldNotificaitons = this.state.notifications;
           let newNotifications = [...oldNotificaitons, message];
-          this.setState({ notifications: newNotifications, userCount: message.userCount });
+          this.setState(
+            { notifications: newNotifications, 
+              userCount: message.userCount
+            })
           break;
         }
         case this.TYPE_INCOMING_DISCONNECT: {
@@ -97,7 +100,7 @@ class App extends Component {
         <nav className="navbar">
           <a href="/" className="navbar-brand">Chatty</a><p className="navbar-usercount">{this.state.userCount} users online</p>
         </nav>
-        <MessageList messages={this.state.messages} notifications={this.state.notifications} />
+        <MessageList messages={this.state.messages} notifications={this.state.notifications} color={this.state.color} />
         <ChatBar currentUser={this.state.currentUser} handleMessage={() => this.handleMessage} setUser={this.setUser} />
       </div>
     );
