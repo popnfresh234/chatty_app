@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import Message from './Message.jsx'
 import Notification from './Notification.jsx'
-
+import { List } from 'semantic-ui-react'
 class MessageList extends Component {
   
   
   render() {
     const notifications = this.props.notifications;
     const messages = this.props.messages;
+    const currentUserId = this.props.currentUserId;
     const combinedArray = notifications.concat(messages);
     const room = this.props.room;
 
@@ -23,14 +24,14 @@ class MessageList extends Component {
 
     const sortedMessages = filteredArray.map((message) => {
       return message.type === 'incomingMessage' 
-      ? <Message key={message.id} message={message} /> 
+      ? <Message key={message.id} message={message} user={currentUserId === message.userId ? 'currentUser': 'otherUser'} /> 
       : <Notification key={message.id} message={message} />;
     })
 
     return (
-      <main className="messages">
+      <List>
         {sortedMessages}
-      </main>
+      </List>
     );
   }
 }

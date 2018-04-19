@@ -43,7 +43,8 @@
   "dependencies": {
     "react": "15.4.2",
     "react-dom": "15.4.2",
-    "semantic-ui-react": "^0.79.1"
+    "semantic-ui-react": "^0.79.1",
+    "uuid": "^3.2.1"
   },
   "bugs": {
     "url": "https://github.com/popnfresh234/chatty/issues"

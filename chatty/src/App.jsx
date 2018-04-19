@@ -4,6 +4,8 @@ import React, {
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 import { Menu } from 'semantic-ui-react'
+import { Container } from 'semantic-ui-react'
+const uuid = require('uuid/v1');
 
 class App extends Component {
 
@@ -20,8 +22,9 @@ class App extends Component {
 
     this.state = {
       currentUser: {
-        name: 'Anonymous'
-      }, // optional. if currentUser is not defined, it means the user is Anonymous
+        name: 'Anonymous',
+        userId: uuid(),
+      }, 
       messages: [],
       notifications: [],
       userCount: 0,
@@ -36,9 +39,11 @@ class App extends Component {
 
   setUser(username) {
     let oldUsername = this.state.currentUser.name;
+    let userId = this.state.currentUser.userId;
     this.setState({
       currentUser: {
-        name: username
+        name: username,
+        userId
       }
     });
     let msgString = oldUsername + ' has changed their name to ' + username;
@@ -50,14 +55,6 @@ class App extends Component {
     this.postNotification(message);
   }
 
-  setRoom(event, room) {
-    event.preventDefault();
-    
-    this.setState({ room })
-  }
-
-  //handleItemClick = e, { name } => this.setState({ activeItem: name })
-
   handleRoomClick(e, ref) {
     let room = Number.parseInt(ref.name);
     this.setState({room});
@@ -65,10 +62,12 @@ class App extends Component {
 
   handleMessage(event) {
     if (event.key === 'Enter') {
-      let userName = this.state.currentUser.name;
+      let username = this.state.currentUser.name;
+      let userId = this.state.currentUser.userId;
       let newMessage = {
         type: 'postMessage',
-        username: userName,
+        username,
+        userId,
         content: event.target.value,
         room: this.state.room,
       }
@@ -140,9 +139,9 @@ class App extends Component {
           </Menu.Item>
           <Menu.Item header position='right'>{this.state.userCount} users online</Menu.Item>
         </Menu>
-
-        <MessageList messages={this.state.messages} notifications={this.state.notifications} color={this.state.color} room={this.state.room}
-        />
+        <Container>
+        <MessageList messages={this.state.messages} notifications={this.state.notifications} color={this.state.color} room={this.state.room} currentUserId={this.state.currentUser.userId}/>
+        </Container>
         <ChatBar currentUser={this.state.currentUser} handleMessage={()=> this.handleMessage} setUser={this.setUser} />
       </div>
     );
