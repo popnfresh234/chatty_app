@@ -16,10 +16,8 @@ class ChatBar extends Component {
     this.setState({ user: event.target.value });    
   }
 
-  updateUsername(event){
-    if(event.key === 'Enter'){
+  updateUsername(event){    
       this.props.setUser(event.target.value);
-    }
   }
 
   render() {
@@ -28,9 +26,8 @@ class ChatBar extends Component {
         <Segment color='blue' attached='bottom'>
           <Grid>
             <Grid.Column  color='blue' width={3}>
-              <Input fluid placeholder="Your Name (Optional)" value={this.state.user} onChange={this.handleUser} onKeyDown={this.updateUsername}/>
+              <Input fluid placeholder="Your Name (Optional)" value={this.state.user} onChange={this.handleUser} onBlur={this.updateUsername}/>
             </Grid.Column>
-
             <Grid.Column  color='blue' width={13}>
               <Input fluid placeholder="Type a message and hit ENTER" onKeyDown={this.props.handleMessage( 'test')} />
             </Grid.Column>
