@@ -139,7 +139,7 @@ class App extends Component {
           </Menu.Item>
           <Menu.Item header position='right'>{this.state.userCount} users online</Menu.Item>
         </Menu>
-        <Container>
+        <Container style={{'margin-bottom':'7rem'}}>
         <MessageList messages={this.state.messages} notifications={this.state.notifications} color={this.state.color} room={this.state.room} currentUserId={this.state.currentUser.userId}/>
         </Container>
         <ChatBar currentUser={this.state.currentUser} handleMessage={()=> this.handleMessage} setUser={this.setUser} />
