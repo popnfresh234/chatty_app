@@ -25,10 +25,12 @@ const server = express()
   .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${PORT}`));
 
 // Create the WebSockets server
-const wss = new SocketServer({ server });
+const wss = new SocketServer({
+  server
+});
 
 const getRandomColor = () => {
-  const COLOR_ARRAY = ['Red', 'Lime', 'Yellow', "Blue", "Fuchsia", "Purple", "Aqua"];
+  const COLOR_ARRAY = ['red', 'orange', 'yellow', 'green', 'teal', 'blue', 'violet', 'purple', 'pink'];
   return COLOR_ARRAY[Math.floor(Math.random() * COLOR_ARRAY.length)];
 }
 
@@ -62,8 +64,7 @@ wss.on('connection', (socket) => {
     //Get incoming mesage, build outgoing message
     let incomingMessage = JSON.parse(data);
     let outgoingMessage = buildMessage(incomingMessage.content);
-    outgoingMessage.username = incomingMessage.username;
-    outgoingMessage.color = socket.color;
+
     outgoingMessage.room = incomingMessage.room;
 
     //Set message type for client
@@ -72,10 +73,13 @@ wss.on('connection', (socket) => {
         outgoingMessage.type = TYPE_INCOMING_NOTIFICATION;
         break;
       case TYPE_POST_MESSAGE:
+        outgoingMessage.username = incomingMessage.username;
+        outgoingMessage.userId = incomingMessage.userId
+        outgoingMessage.color = socket.color;
         outgoingMessage.type = TYPE_INCOMING_MESSAGE;
         break;
     }
-
+    console.log(outgoingMessage);
     broadcast(outgoingMessage);
   });
 
@@ -87,4 +91,3 @@ wss.on('connection', (socket) => {
     broadcast(disconnectMessage);
   });
 });
-
