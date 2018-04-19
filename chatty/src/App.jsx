@@ -139,12 +139,18 @@ class App extends Component {
           </Menu.Item>
           <Menu.Item header position='right'>{this.state.userCount} users online</Menu.Item>
         </Menu>
-        <Container style={{'margin-bottom':'7rem'}}>
+        <Container style={{'marginBottom':'7rem'}}>
         <MessageList messages={this.state.messages} notifications={this.state.notifications} color={this.state.color} room={this.state.room} currentUserId={this.state.currentUser.userId}/>
+        <div ref={(scrollDummy) => { this.endOfMessages = scrollDummy; }}/>
         </Container>
         <ChatBar currentUser={this.state.currentUser} handleMessage={()=> this.handleMessage} setUser={this.setUser} />
       </div>
     );
   }
+
+  componentDidUpdate(){
+    this.endOfMessages.scrollIntoView({ behavior: 'smooth' });
+  }
 }
+
 export default App;
