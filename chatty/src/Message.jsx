@@ -7,12 +7,9 @@ class Message extends Component {
       color: this.props.message.color
     }
 
-    const imageStyle = {
-      maxWidth: '60vw'
-    }
-
     const user = this.props.user;
     const content = this.props.message.content;
+    //Check for image URLs, pull out strings before and after
     const matched = content.match(/(https?:\/\/.*\.(jpg|jpeg|png|gif))/i);
     let before = '';
     let after = '';
@@ -26,10 +23,10 @@ class Message extends Component {
         <Segment color={this.props.message.color} floated={user === 'currentUser' ? 'left' : 'right'}>
           {matched ?
             <div>
-              <span className="message-username" style={colorStyle}>{this.props.message.username}</span>
+              <span className="message-username" style={{'color': this.props.message.color}}>{this.props.message.username}</span>
               {before && <span>{before}</span>}
               {<Divider/>}
-              <Image src={matched[0]} fluid style={imageStyle} />
+              <Image src={matched[0]} fluid style={{'maxWidth': '60vw'}} />
               {after && <Divider/>}
               {after && <span>{after}</span>}
             </div>
