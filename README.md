@@ -52,5 +52,7 @@ express
 uuid
 ws
 
-### ScreenShots:
+### Screenshots:
 
+!["Screen 1"](https://github.com/popnfresh234/chatty_app/blob/master/docs/screen1.png)
+!["Screen 2"](https://github.com/popnfresh234/chatty_app/blob/master/docs/screen2.png)
