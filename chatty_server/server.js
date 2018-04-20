@@ -3,9 +3,7 @@ const TYPE_POST_NOTIFICATION = 'postNotification';
 const TYPE_INCOMING_NOTIFICATION = 'incomingNotification'
 const TYPE_POST_MESSAGE = 'postMessage';
 const TYPE_INCOMING_MESSAGE = 'incomingMessage';
-const TYPE_POST_CONNECT = 'postConnect';
 const TYPE_INCOMING_CONNECT = 'incomingConnect';
-const TYPE_POST_DISCONNECT = 'postDisconnect';
 const TYPE_INCOMING_DISCONNECT = 'incomingDisconnect';
 
 
