@@ -28,29 +28,29 @@ npm start
 
 ### Dependencies Client
 
-babel-core
-babel-loader
-babel-preset-es2015
-babel-preset-react
-babel-preset-stage-0
-css-loader
-eslint
-eslint-plugin-react
-node-sass
-sass-loader
-sockjs-client
-style-loader
-webpack
-webpack-dev-serverreact
-react-dom
-semantic-ui-react1
-uuid
+- babel-core
+- babel-loader
+- babel-preset-es2015
+- babel-preset-react
+- babel-preset-stage-0
+- css-loader
+- eslint
+- eslint-plugin-react
+- node-sass
+- sass-loader
+- sockjs-client
+- style-loader
+- webpack
+- webpack-dev-serverreact
+- react-dom
+- semantic-ui-react1
+- uuid
 
 ### Dependencies Server
 
-express
-uuid
-ws
+- express
+- uuid
+- ws
 
 ### Screenshots:
 
