@@ -1,11 +1,8 @@
-var path = require('path');
-var webpack = require('webpack');
-
+const path = require('path');
+const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-const SRC = path.resolve(__dirname, './src');
 const DIST = path.resolve(__dirname, './dist');
 
 const extractStyles = loaders => {
